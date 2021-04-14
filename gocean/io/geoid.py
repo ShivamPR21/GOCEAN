@@ -80,11 +80,11 @@ class GeoidIO:
         self.grid = np.zeros([self.header['latitude_parallels'],
                               self.header['longitude_parallels'], 3])
 
-        self.grid[:, :, 0] = np.reshape(self.data['long'].values,
+        self.grid[:, :, 0] = np.reshape(self.data['lat'].values,
                                         [self.header['latitude_parallels'],
                                          self.header['longitude_parallels']])
 
-        self.grid[:, :, 1] = np.reshape(self.data['lat'].values,
+        self.grid[:, :, 1] = np.reshape(self.data['long'].values,
                                         [self.header['latitude_parallels'],
                                          self.header['longitude_parallels']])
 
