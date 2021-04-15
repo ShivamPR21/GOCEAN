@@ -25,7 +25,7 @@ class SSHIO:
 
     def __init__(self, data_dir):
         self.data_dir = data_dir
-        self.file_list = glob.glob(os.path.join(self.data_dir, '*', '*.nc'))
+        self.file_list = glob.glob(os.path.join(self.data_dir, '*', '*' , '*.nc'))
         self.grid = None
         self.grid_filled = None
         self.mask = None
