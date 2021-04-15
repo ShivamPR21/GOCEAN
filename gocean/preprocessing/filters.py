@@ -13,5 +13,5 @@
 # limitations under the License.
 
 
-def gaussian(mat, sigma, window):
-    
+# def gaussian(mat, sigma, window):
+#
