@@ -28,7 +28,7 @@ class SSHIO:
     """
     def __init__(self, data_dir):
         self.data_dir = data_dir
-        self.file_list = glob.glob(os.path.join(self.data_dir, '*', '*', '*.nc'))
+        self.file_list = glob.glob(os.path.join(self.data_dir, '*', '*.nc'))
         self.grid = None
         self.grid_filled = None
         self.mask = None
@@ -55,9 +55,6 @@ class SSHIO:
             lat_long_query = np.concatenate(([dataset['glat.00'][:].data],
                                              [dataset['glon.00'][:].data]),
                                             axis=0).T
-
-            # lat = dataset['glat.00'][:]['data']
-            # long = dataset['glon.00'][:]['data']
             ssh = np.array([dataset['ssh.33'][:].data], dtype=float).T
             idx = source_grid.query(lat_long_query, return_distance=False)
 
@@ -69,5 +66,5 @@ class SSHIO:
 
         if fill_missing:
             idx = np.where(frequency != 0)
-            self.grid_filled = griddata(lat_long[idx], mean_ssh[idx], (grid[:, :, 0], grid[:, :, 1]), method='cubic')
+            self.grid_filled = griddata(lat_long[idx], mean_ssh[idx], (grid[:, :, 0], grid[:, :, 1]))
             self.mask = np.isnan(self.grid_filled)
