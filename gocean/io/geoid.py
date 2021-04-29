@@ -31,6 +31,11 @@ def strproc(string):
 
 
 def split_data(df):
+    """
+    Splits the string in logical partitions
+    :param df: dataframe that is affected due to wrong formatting
+    :return: new DataFrame
+    """
     new_data = []
     for i, row in enumerate(df.iloc[:].values):
         new_data.append(strproc(row[0]))
@@ -38,7 +43,9 @@ def split_data(df):
 
 
 class GeoidIO:
-
+    """
+    Works on the geoid read and grid creation
+    """
     def __init__(self, data_dir=None):
         self.data_dir = str(data_dir)
         self.header = {}
@@ -46,6 +53,10 @@ class GeoidIO:
         self.grid = None
 
     def read(self, file_name='geoid.gdf'):
+        """
+        Reads Geoid information from the file given
+        :param file_name: String
+        """
         with open(os.path.join(self.data_dir, file_name), 'r') as file:
             header = True
             for line in file:
@@ -77,6 +88,9 @@ class GeoidIO:
             self.data = pd.DataFrame(self.data, columns=['long', 'lat', 'geoid'])
 
     def create_geoid_grid(self):
+        """
+        Creates geoid grid required for MDT and SSH grids
+        """
         self.grid = np.zeros([self.header['latitude_parallels'],
                               self.header['longitude_parallels'], 3])
 

@@ -15,7 +15,14 @@ import numpy as np
 from scipy.ndimage import gaussian_filter
 
 
-def gaussian(mat, mask, sigma):
+def gaussian(mat, mask, sigma=2):
+    """
+    Applies the Gaussian filtering to the system
+    :param mat: image/data
+    :param mask:
+    :param sigma: float standard deviation
+    :return:
+    """
     filtered_mat = gaussian_filter(mat, sigma, mode='constant')
     filtered_mat[mask] = np.nan
     return filtered_mat

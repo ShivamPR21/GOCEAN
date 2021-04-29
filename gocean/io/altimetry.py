@@ -22,15 +22,24 @@ from sklearn.neighbors import BallTree
 
 
 class SSHIO:
-
+    """
+    Reads and interpolated the Sea Surface Height from netcdf files
+    for SARAL and JASON2
+    """
     def __init__(self, data_dir):
         self.data_dir = data_dir
-        self.file_list = glob.glob(os.path.join(self.data_dir, '*', '*' , '*.nc'))
+        self.file_list = glob.glob(os.path.join(self.data_dir, '*', '*', '*.nc'))
         self.grid = None
         self.grid_filled = None
         self.mask = None
 
     def read(self, grid, fill_missing=True):
+        """
+        Reads the data from file and fill the provided grid
+        The grid should be similar to that of Geoid
+        :param grid: numpy grid with first 2 bands as lat long and the last one is geoid
+        :param fill_missing: Bool if true, the missing values will be interpolated.
+        """
         grid_shape = [grid.shape[0], grid.shape[1], 2]
         self.grid = np.zeros(grid_shape)
 
