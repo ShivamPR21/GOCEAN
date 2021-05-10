@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Import libraries
 import glob
 import os
 
@@ -46,13 +47,17 @@ class SSHIO:
         grid_shape = [grid.shape[0], grid.shape[1], 2]
         self.grid = np.zeros(grid_shape)
 
+        # Initiate frequency of altimtery data
         frequency = self.grid[:, :, 0].flatten()
         mean_ssh = self.grid[:, :, 1].flatten()
 
+        # Create latitude and longitude grid
         lat_long = np.concatenate(([grid[:, :, 0].flatten()], [grid[:, :, 1].flatten()]), axis=0).T
 
+        # Ctreate ball search tree
         source_grid = BallTree(lat_long)
 
+        # Load and interpolate the data
         for file in self.file_list:
             dataset = nc.Dataset(file, 'r')
             lat_long_query = np.concatenate(([dataset['glat.00'][:].data],
@@ -72,6 +77,7 @@ class SSHIO:
             ll_coord = lat_long[idx]
             ssh_ll = mean_ssh[idx]
 
+            # Statistical Outlier removal
             mu_ = np.mean(ll_coord, axis=0)
             std_ = np.std(ll_coord, axis=0)
 
@@ -80,5 +86,6 @@ class SSHIO:
 
             new_idx = np.where(tr_map_0 * tr_map_1)
 
+            # Create the grid
             self.grid_filled = griddata(lat_long[idx][new_idx], mean_ssh[idx][new_idx], (grid[:, :, 0], grid[:, :, 1]))
             self.mask = np.isnan(self.grid_filled)
