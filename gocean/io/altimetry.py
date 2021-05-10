@@ -26,17 +26,20 @@ class SSHIO:
     Reads and interpolated the Sea Surface Height from netcdf files
     for SARAL and JASON2
     """
+
     def __init__(self, data_dir):
         self.data_dir = data_dir
-        self.file_list = glob.glob(os.path.join(self.data_dir, '*', '*.nc'))
+        self.file_list = glob.glob(os.path.join(self.data_dir, '*', '*', '*.nc'))
         self.grid = None
         self.grid_filled = None
         self.mask = None
 
-    def read(self, grid, fill_missing=True):
+    def read(self, grid, fill_missing=True, sigma=2, rm_outlier=True):
         """
         Reads the data from file and fill the provided grid
         The grid should be similar to that of Geoid
+        :param sigma:
+        :param rm_outlier:
         :param grid: numpy grid with first 2 bands as lat long and the last one is geoid
         :param fill_missing: Bool if true, the missing values will be interpolated.
         """
@@ -66,5 +69,16 @@ class SSHIO:
 
         if fill_missing:
             idx = np.where(frequency != 0)
-            self.grid_filled = griddata(lat_long[idx], mean_ssh[idx], (grid[:, :, 0], grid[:, :, 1]))
+            ll_coord = lat_long[idx]
+            ssh_ll = mean_ssh[idx]
+
+            mu_ = np.mean(ll_coord, axis=0)
+            std_ = np.std(ll_coord, axis=0)
+
+            tr_map_1 = (ll_coord[:, 1] < mu_[1] + std_[1] * sigma) * (ll_coord[:, 1] > mu_[1] - std_[1] * sigma)
+            tr_map_0 = (ll_coord[:, 0] < mu_[0] + std_[0] * sigma) * (ll_coord[:, 0] > mu_[0] - std_[0] * sigma)
+
+            new_idx = np.where(tr_map_0 * tr_map_1)
+
+            self.grid_filled = griddata(lat_long[idx][new_idx], mean_ssh[idx][new_idx], (grid[:, :, 0], grid[:, :, 1]))
             self.mask = np.isnan(self.grid_filled)
